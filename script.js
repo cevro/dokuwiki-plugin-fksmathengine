@@ -13,12 +13,11 @@ jQuery(function() {
         var result = engine();
         $.post(DOKU_BASE + 'lib/exe/ajax.php',
                 {call: 'plugin_fksmathengine', target: 'fksmathengine', name: 'local', param: attr, result: result},
-                function(data) {
-                    if (data['s']) {
-                        console.log(data);
-                        document.getElementById("results").value = result;
-                    }
-                },
+        function(data) {
+            if (data['s']) {
+                document.getElementById("results").value = result;
+            }
+        },
                 'json');
     });
 });
