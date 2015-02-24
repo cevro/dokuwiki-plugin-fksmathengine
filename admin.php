@@ -73,7 +73,7 @@ class admin_plugin_fksmathengine extends DokuWiki_Admin_Plugin {
             $val[] = $i;
         }
         $form->addElement(form_makeMenuField('sort', $val, null,''));
-        $form->addElement(form_makeCheckboxField('reverse',null,$this->getLang('reverse')));
+        $form->addElement(form_makeCheckboxField('reverse',1,$this->getLang('reverse')));
         $form->addElement(form_makeButton('submit', null, $this->getLang('sort')));
         
         echo html_open_tag('h1', array());
