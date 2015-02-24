@@ -22,7 +22,7 @@ class admin_plugin_fksmathengine extends DokuWiki_Admin_Plugin {
     }
 
     public function getMenuSort() {
-        return 229;
+        return 230;
     }
 
     public function forAdminOnly() {
@@ -30,7 +30,7 @@ class admin_plugin_fksmathengine extends DokuWiki_Admin_Plugin {
     }
 
     public function getMenuText($language) {
-        $menutext = 'FKS_math_engine';
+        $menutext = $this->getLang('name');
         return $menutext;
     }
 
@@ -40,7 +40,7 @@ class admin_plugin_fksmathengine extends DokuWiki_Admin_Plugin {
 
     public function html() {
         global $INPUT;
-
+        helper_plugin_fkshelper::_returnMenu();
 
         $log = io_readFile(metaFN('fksmathengine:log_1', '.log'));
         $parse_log = explode("\n", $log);
@@ -54,9 +54,13 @@ class admin_plugin_fksmathengine extends DokuWiki_Admin_Plugin {
 
         if (!empty($sort)) {
             $id = (int) $sort;
+            
             usort($log_lines, function($a, $b) use ($id) {
                 return ($a[$id] < $b[$id]) ? -1 : 1;
             });
+            if($INPUT->str('reverse')){
+                $log_lines=array_reverse($log_lines);
+            }
         }
 
         $NO = count($log_lines[0]);
@@ -64,22 +68,33 @@ class admin_plugin_fksmathengine extends DokuWiki_Admin_Plugin {
         $form = new Doku_Form(array(), '?do=admin&page=fksmathengine', 'POST');
         $form->addHidden('do', 'admin');
         $form->addHidden('page', 'fksmathengine');
-        $val = array('Sort by');
+        $val = array($this->getLang('sort_by'));
         for ($i = 0; $i < $NO; $i++) {
             $val[] = $i;
         }
         $form->addElement(form_makeMenuField('sort', $val, null,''));
-        $form->addElement(form_makeButton('submit', null, 'Sort by'));
-        echo '<div class="FKS_mathengine_sort">';
+        $form->addElement(form_makeCheckboxField('reverse',null,$this->getLang('reverse')));
+        $form->addElement(form_makeButton('submit', null, $this->getLang('sort')));
+        
+        echo html_open_tag('h1', array());
+        echo $this->getLang('name').' -- '.$this->getLang('log_view');
+        echo html_close_tag('h3');
+        echo html_open_tag('div', array('class'=>'FKS_mathengine_sort'));
+        
         html_form('nic', $form);
-        echo'</div>';
+        echo html_close_tag('div');
+        
         echo html_open_tag('table', array('class'=>'table table-striped FKS_mathengine_table'));
         
-        echo '<thead><tr>';
+        echo html_open_tag('thead', array());
+        echo html_open_tag('tr', array());
+        
         for ($i = 0; $i < $NO - 2; $i++) {
-            echo '<th>Data</th>';
+            echo html_open_tag('th', array());
+            echo $this->getLang('data');
+            echo html_close_tag('th');
         }
-        echo '<th>Time</th><th>IP</th></tr></thead>';
+        echo '<th>'.$this->getLang('time').'</th><th>'.$this->getLang('ip').'</th></tr></thead>';
 
         foreach ($log_lines as $value) {
             echo '<tr><td>' . implode('</td><td>', $value) . '</td></tr>';
